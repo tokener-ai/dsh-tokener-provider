@@ -1,52 +1,46 @@
 # Tokener provider for DeepSeek Harness
 
-Connect Tokener to DeepSeek Harness without the Tokener CLI or rx. The plugin adds a Tokener page to Settings. Harness stores your API key in its credential store, not in the plugin configuration.
+[![Check](https://github.com/tokener-ai/dsh-tokener-provider/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/tokener-ai/dsh-tokener-provider/actions/workflows/check.yml) [![License: MIT](https://img.shields.io/github/license/tokener-ai/dsh-tokener-provider)](LICENSE)
 
-Version `0.1.0-beta.1` is a beta release. It requires Node.js 24.9 or later. The allowed DeepSeek Harness range is `>=0.2.2-rc.1 <0.3.0-0`. The plugin was tested on `0.2.2-rc.1`. Later `0.2.x` versions, including prereleases, can install the plugin but remain unverified.
+Use models from [Tokener](https://tokener.ai) in the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) web UI. Connect your API key in Settings, then select a model in your conversation.
+
+This plugin is in beta. It requires Node.js 24.9+ and DeepSeek Harness `>=0.2.2-rc.1 <0.3.0-0`.
 
 ## Install and connect
 
-Install the npm package:
+With DeepSeek Harness installed, run:
 
 ```sh
 dsh plugin --profile web add @tokener-ai/dsh-tokener-provider@beta
+dsh web
 ```
 
-Harness requires an explicit profile. The command installs into the web profile. For another profile, use `dsh plugin --profile <profile> add @tokener-ai/dsh-tokener-provider@beta`. The Settings page requires the web UI.
+1. Open Settings → Tokener.
+2. Paste your [Tokener API key](https://tokener.ai) and select **Connect and refresh models**.
+3. Select a Tokener model from the conversation model picker.
 
-1. Start `dsh web` and open Settings → Tokener.
-2. Paste your Tokener API key.
-3. Select **Connect and refresh models**.
-4. Select a Tokener model from the conversation model picker.
+If Settings → Tokener does not appear, restart Harness. To refresh models, enter your API key and connect again. To update the plugin, run the installation command again.
 
-If the page does not appear after installation, restart Harness. To refresh your available models, enter the API key again and connect. An invalid key does not replace your stored key or model configuration.
+## Compatibility and models
 
-The npm `beta` tag provides the beta release. No stable release is available. After the `latest` tag provides a stable release, you can install the package without `@beta`. No official plugin market is required.
+Version `0.1.0-beta.1` is a prerelease. Both npm tags, `beta` and `latest`, currently resolve to this beta. Later compatible Harness `0.2.x` releases remain unverified.
 
-Harness saves the resolved version. To install a newer beta, run the installation command again.
+The plugin lists authorized chat models with complete public catalog metadata, context and output limits, streaming, and tool support. Settings shows excluded models and their reasons. If discovery or catalog validation fails, the saved connection stays unchanged.
 
-## Models and credentials
+Anthropic models use Anthropic Messages. Other models use OpenAI Responses. A listed model does not guarantee that its upstream supports the selected protocol.
 
-The plugin validates your key through `GET https://api.tokener.ai/v1/models`. It reads model metadata from the anonymous public catalog at `https://console.tokener.ai/api/public/v1/models` and joins the two lists by model ID. Your API key goes only to `api.tokener.ai`. The public catalog request sends no credentials and follows no redirects.
+Start a new conversation when you change models or providers. Encrypted reasoning is not portable across upstreams.
 
-Models whose catalog provider is `Anthropic` use Anthropic Messages. Other providers use OpenAI Responses, the Tokener agent protocol declared in rx. This is a provider policy. It is not proof that every model works on that protocol. The public catalog supplies the label, context capacity, output limit, and capabilities. The `vision` capability enables image input. Harness accepts text and image inputs. The plugin does not claim PDF support.
+## Credentials and removal
 
-The plugin supports catalog `schemaVersion: 1`. `catalogRevision` identifies catalog content; it does not select a schema. If the catalog is unreachable, invalid, or on an unsupported schema version, connection fails and the saved key and routes stay unchanged. There is no static capacity fallback or runtime models.dev lookup.
+The plugin sends your API key only to `api.tokener.ai`. It reads the public model catalog without credentials. Harness stores your API key in its credential store. Do not assume that this store encrypts secrets.
 
-Only authorized chat models with positive context and output limits and declared streaming and tool support enter the model picker. A missing catalog entry, missing limit, or missing capability excludes that model. Settings lists the excluded IDs and reasons. If no models qualify, the saved connection stays unchanged. A missing label uses the model ID. New models with complete catalog metadata can appear without a plugin update.
+Connecting replaces the `tokener` and `tokener-claude` routes and preserves other routes. Route configuration references `TOKENER_API_KEY` rather than the key itself. If saving fails after credential storage succeeds, the key can change before the routes do.
 
-Only reasoning levels remain static. `src/model-metadata.json` records the rx capability-table source and its exact protocol-specific wire values. The catalog must also declare `reasoning` before the plugin offers these controls. Models without verified levels use the provider default and show no effort selector. The plugin does not change a rejected value to another value or retry it. Harness owns request conversion, streaming, tools, and credential injection. An upstream rejection remains an error.
+Removing the plugin removes its Settings page. Saved routes and credentials remain. If you no longer use them, remove both routes in Settings → Models and remove the `TOKENER_API_KEY` credential.
 
-The plugin writes two Harness routes: `tokener` and `tokener-claude`. Connecting replaces these routes and preserves other routes. Configuration contains only the `TOKENER_API_KEY` reference. Harness resolves the stored key for each request. Do not assume that its local credential store encrypts secrets.
+## Development
 
-Start a new conversation when you change models or providers. Encrypted reasoning from one upstream is not portable across upstreams.
+Run `pnpm install --frozen-lockfile` to install dependencies. Run `pnpm check` for tests, the client build, and syntax checks. See [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a change.
 
-## Remove and develop
-
-Removing the plugin removes its Settings page. The saved routes and credential remain Harness-owned configuration. Remove those routes in Settings → Models and remove the `TOKENER_API_KEY` credential if you no longer use it.
-
-Run `pnpm install --frozen-lockfile` to install development dependencies. Run `pnpm check` for the credential and routing contracts, client build, and JavaScript syntax. Run `pnpm pack` to make a local archive. Install that archive with `dsh plugin --profile web add /absolute/path/to/package.tgz`. The generated client uses the host React instance and the host remote APIs. No adapter or pi-ai copy ships in the archive.
-
-Only `package.json` owns the package name. `pnpm build` generates the bundle patch and client module identity from that name. Rebuild those files after changing the name.
-
-The MIT license applies to this repository.
+This project uses the [MIT license](LICENSE).
