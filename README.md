@@ -2,17 +2,17 @@
 
 Connect Tokener to DeepSeek Harness without the Tokener CLI or rx. The plugin adds a Tokener page to Settings. Harness stores your API key in its credential store, not in the plugin configuration.
 
-This private MVP is not published to npm. It requires Node.js 24.9 or later. The allowed DeepSeek Harness range is `>=0.2.2-rc.1 <0.3.0-0`. The plugin was tested on `0.2.2-rc.1`. Later `0.2.x` versions, including prereleases, can install the plugin but remain unverified.
+Version `0.1.0-beta.1` is a beta release. It requires Node.js 24.9 or later. The allowed DeepSeek Harness range is `>=0.2.2-rc.1 <0.3.0-0`. The plugin was tested on `0.2.2-rc.1`. Later `0.2.x` versions, including prereleases, can install the plugin but remain unverified.
 
 ## Install and connect
 
-Build a local package with `pnpm install --frozen-lockfile` and `pnpm pack`. Install the resulting archive:
+Install the npm package:
 
 ```sh
-dsh plugin --profile web add /absolute/path/to/package.tgz
+dsh plugin --profile web add @tokener-ai/dsh-tokener-provider@beta
 ```
 
-Harness requires an explicit profile. The command installs into the web profile. For another profile, use `dsh plugin --profile <profile> add <archive>`. The Settings page requires the web UI.
+Harness requires an explicit profile. The command installs into the web profile. For another profile, use `dsh plugin --profile <profile> add @tokener-ai/dsh-tokener-provider@beta`. The Settings page requires the web UI.
 
 1. Start `dsh web` and open Settings → Tokener.
 2. Paste your Tokener API key.
@@ -21,7 +21,9 @@ Harness requires an explicit profile. The command installs into the web profile.
 
 If the page does not appear after installation, restart Harness. To refresh your available models, enter the API key again and connect. An invalid key does not replace your stored key or model configuration.
 
-After npm publication, installation will use `dsh plugin --profile web add @tokener-ai/dsh-tokener-provider`. No official plugin market is required.
+The npm `beta` tag provides the beta release. No stable release is available. After the `latest` tag provides a stable release, you can install the package without `@beta`. No official plugin market is required.
+
+Harness saves the resolved version. To install a newer beta, run the installation command again.
 
 ## Models and credentials
 
@@ -43,7 +45,7 @@ Start a new conversation when you change models or providers. Encrypted reasonin
 
 Removing the plugin removes its Settings page. The saved routes and credential remain Harness-owned configuration. Remove those routes in Settings → Models and remove the `TOKENER_API_KEY` credential if you no longer use it.
 
-Run `pnpm check` for the credential and routing contracts, client build, and JavaScript syntax. Run `pnpm pack` to make the installable archive. The generated client uses the host React instance and the host remote APIs. No adapter or pi-ai copy ships in the archive.
+Run `pnpm install --frozen-lockfile` to install development dependencies. Run `pnpm check` for the credential and routing contracts, client build, and JavaScript syntax. Run `pnpm pack` to make a local archive. Install that archive with `dsh plugin --profile web add /absolute/path/to/package.tgz`. The generated client uses the host React instance and the host remote APIs. No adapter or pi-ai copy ships in the archive.
 
 Only `package.json` owns the package name. `pnpm build` generates the bundle patch and client module identity from that name. Rebuild those files after changing the name.
 
