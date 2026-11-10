@@ -10,7 +10,7 @@
   },
   "files": [
     "index.mjs",
-    "lib/client.js",
+    "lib/client*.js",
     "cordis.patch.yml",
     "README.md",
     "LICENSE"
