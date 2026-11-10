@@ -1,6 +1,6 @@
 {
   "name": "@tokener-ai/dsh-tokener-provider",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "Tokener model provider for DeepSeek Harness",
   "type": "module",
   "main": "index.mjs",
@@ -52,7 +52,6 @@
     "esbuild": "0.28.2"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "beta"
+    "access": "public"
   }
 }
