@@ -17,6 +17,7 @@
   ],
   "license": "MIT",
   "repository": "github:tokener-ai/dsh-tokener-provider",
+  "homepage": "https://tokener.ai",
   "keywords": [
     "dsh-plugin",
     "deepseek-harness",
