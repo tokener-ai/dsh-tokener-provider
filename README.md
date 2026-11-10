@@ -2,7 +2,7 @@
 
 Connect Tokener to DeepSeek Harness without the Tokener CLI or rx. The plugin adds a Tokener page to Settings. Harness stores your API key in its credential store, not in the plugin configuration.
 
-This private MVP is not published to npm. It supports DeepSeek Harness `0.2.2-rc.1` and Node.js 24.9 or later.
+This private MVP is not published to npm. It requires Node.js 24.9 or later. The allowed DeepSeek Harness range is `>=0.2.2-rc.1 <0.3.0-0`. The plugin was tested on `0.2.2-rc.1`. Later `0.2.x` versions, including prereleases, can install the plugin but remain unverified.
 
 ## Install and connect
 
