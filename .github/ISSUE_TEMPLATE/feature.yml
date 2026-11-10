@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a change to this project.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, personal data, or other private information.
+  - type: textarea
+    id: need
+    attributes:
+      label: What problem do you want to solve?
+      description: Describe the need and who it affects.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What change do you propose?
+      description: Describe the result you want. You do not need to prescribe an implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What alternatives did you consider?
+      description: Add alternatives or context that will help maintainers assess the request.
