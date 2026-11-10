@@ -1,0 +1,147 @@
+{
+  "source": {
+    "providerAdmission": {
+      "repository": "https://github.com/samzong/Rx.git",
+      "commit": "a6a1723952828d39b2dd04736ef67df1707182e7",
+      "path": "data/provider-admission.json",
+      "sha256": "e446d67a3cd4380e2168396461eac5939d9343381c858cd3ea5cb0f252591b46"
+    }
+  },
+  "models": {
+    "gpt-6-luna": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-6-sol": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-6-astra": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh"
+      }
+    },
+    "gpt-5.6-luna": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-5.6-sol": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-5.6-terra": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "glm-5.2": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium"
+      }
+    },
+    "deepseek-v4-flash": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "deepseek-flash": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "deepseek-v4-pro": {
+      "api": "openai-responses",
+      "reasoningEfforts": {
+        "off": "none",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "claude-opus-5": {
+      "api": "anthropic-messages",
+      "reasoningEfforts": {
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "claude-sonnet-5": {
+      "api": "anthropic-messages",
+      "reasoningEfforts": {
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "claude-fable-5": {
+      "api": "anthropic-messages",
+      "reasoningEfforts": {
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    }
+  }
+}
