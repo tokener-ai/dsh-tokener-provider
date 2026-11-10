@@ -1,10 +1,11 @@
 import React from 'react'
 import { connect, CREDENTIAL } from './catalog.mjs'
+import icon from './tokener.svg'
 const h = React.createElement
-function TokenerSection({ api }) {
+function TokenerSection({ api, t, messageKeys }) {
   const [key, setKey] = React.useState('')
   const [busy, setBusy] = React.useState(false)
-  const [message, setMessage] = React.useState('')
+  const [message, setMessage] = React.useState(null)
   const [failed, setFailed] = React.useState(false)
   const [connected, setConnected] = React.useState(false)
   const [skipped, setSkipped] = React.useState([])
@@ -16,38 +17,46 @@ function TokenerSection({ api }) {
     setBusy(true)
     setFailed(false)
     setSkipped([])
-    setMessage('Connecting to Tokener…')
+    setMessage({ key: 'connecting' })
     try {
       const result = await connect(api, key)
       setKey('')
       setConnected(true)
       setSkipped(result.skipped)
-      setMessage(`Connected. ${result.count} chat models are available.${result.skipped.length ? ` ${result.skipped.length} models are not offered.` : ''}`)
+      setMessage({ key: 'connected', params: { count: result.count } })
     } catch (error) {
       setFailed(true)
-      setMessage(error.message)
+      setMessage({ key: messageKeys[error.message] ?? error.message })
     } finally {
       setBusy(false)
     }
   }
   return h('section', { style: { maxWidth: 680, padding: 24 } },
-    h('h2', null, 'Tokener'),
-    h('p', null, 'Connect your Tokener API key to use your available models.'),
-    h('p', null, connected ? 'An API key is stored in the Harness credential store.' : 'Your API key stays in the Harness credential store.'),
+    h('h2', null, t('title')),
+    h('p', null, h('a', { href: 'https://tokener.ai', target: '_blank', rel: 'noopener noreferrer', style: { color: 'var(--dsw-alias-link)', textDecoration: 'underline' } }, t('getKey'))),
+    h('p', null, t(connected ? 'credentialSaved' : 'credential')),
     h('form', { onSubmit: save },
-      h('label', { htmlFor: 'tokener-api-key' }, 'Tokener API key'),
+      h('label', { htmlFor: 'tokener-api-key' }, t('keyLabel')),
       h('input', { id: 'tokener-api-key', type: 'password', autoComplete: 'off', spellCheck: false, value: key, disabled: busy,
         onChange: event => setKey(event.target.value), style: { display: 'block', width: '100%', boxSizing: 'border-box', padding: '10px 12px', margin: '8px 0 16px', border: '1px solid var(--border-color, #8886)', borderRadius: 8, background: 'transparent', color: 'inherit' } }),
-      h('button', { type: 'submit', disabled: busy || !key.trim(), style: { padding: '8px 16px', borderRadius: 8, cursor: busy ? 'wait' : 'pointer' } }, busy ? 'Connecting…' : 'Connect and refresh models')),
-    message && h('p', { role: failed ? 'alert' : 'status', 'aria-live': 'polite' }, message),
-    skipped.length > 0 && h('ul', null, skipped.map(model => h('li', { key: model.id }, `${model.id}: ${model.reason}`))),
-    h('p', null, 'Models need public catalog metadata with context and output limits, streaming, and tool support. Models without verified reasoning levels use the provider default.'),
-    h('p', null, 'Select a model from the conversation model picker. To refresh the list, enter your API key and connect again.'))
+      h('button', { type: 'submit', disabled: busy || !key.trim(), style: { padding: '8px 16px', borderRadius: 8, cursor: busy ? 'wait' : 'pointer' } }, t(busy ? 'connecting' : 'connect'))),
+    message && h('p', { role: failed ? 'alert' : 'status', 'aria-live': 'polite' }, t(message.key, message.params)),
+    skipped.length > 0 && h(React.Fragment, null,
+      h('p', null, t('excluded', { count: skipped.length })),
+      h('ul', null, skipped.map(model => h('li', { key: model.id }, `${model.id}: ${t(messageKeys[model.reason] ?? model.reason)}`)))),
+    h('p', null, t('usage')))
 }
-export const inject = ['slots', 'remote.credentials', 'remote.settings', 'remote.llm']
-export function apply(ctx) {
+export const inject = ['slots', 'locale', 'remote.credentials', 'remote.settings', 'remote.llm']
+export async function apply(ctx) {
+  const { NS, dictionaries, messageKeys } = await require.async(TOKENER_LOCALE_CHUNK)
   const api = { credentials: ctx.get('remote.credentials'), settings: ctx.get('remote.settings'), llm: ctx.get('remote.llm') }
+  const locale = ctx.get('locale')
+  ctx.effect(() => locale.register(NS, dictionaries))
+  const t = locale.bind(NS)
   ctx.get('slots').inject('settings.section', () => ctx.get('slots').register({
-    name: 'settings.section', id: 'tokener-provider', order: 20, label: () => 'Tokener', inject: () => ({ api }),
+    name: 'settings.section', id: 'tokener-provider', order: 20, label: () => t('title'), locale: NS, inject: () => ({ api, messageKeys }),
   }, props => h(TokenerSection, props)))
+  ctx.get('slots').inject('settings.section.icon', () => ctx.get('slots').register({
+    name: 'settings.section.icon', id: 'tokener-provider',
+  }, ({ size }) => h('span', { 'aria-hidden': true, style: { display: 'block', width: size, height: size, backgroundColor: 'currentColor', mask: `url(${JSON.stringify(icon)}) center / contain no-repeat` } })))
 }
