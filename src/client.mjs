@@ -2,7 +2,7 @@ import React from 'react'
 import { connect, CREDENTIAL } from './catalog.mjs'
 import icon from './tokener.svg'
 const h = React.createElement
-function TokenerSection({ api, t, messageKeys }) {
+function TokenerSection({ api, t }) {
   const [key, setKey] = React.useState('')
   const [busy, setBusy] = React.useState(false)
   const [message, setMessage] = React.useState(null)
@@ -26,7 +26,7 @@ function TokenerSection({ api, t, messageKeys }) {
       setMessage({ key: 'connected', params: { count: result.count } })
     } catch (error) {
       setFailed(true)
-      setMessage({ key: messageKeys[error.message] ?? error.message })
+      setMessage({ key: error.message })
     } finally {
       setBusy(false)
     }
@@ -43,18 +43,18 @@ function TokenerSection({ api, t, messageKeys }) {
     message && h('p', { role: failed ? 'alert' : 'status', 'aria-live': 'polite' }, t(message.key, message.params)),
     skipped.length > 0 && h(React.Fragment, null,
       h('p', null, t('excluded', { count: skipped.length })),
-      h('ul', null, skipped.map(model => h('li', { key: model.id }, `${model.id}: ${t(messageKeys[model.reason] ?? model.reason)}`)))),
+      h('ul', null, skipped.map(model => h('li', { key: model.id }, `${model.id}: ${t(model.reason)}`)))),
     h('p', null, t('usage')))
 }
 export const inject = ['slots', 'locale', 'remote.credentials', 'remote.settings', 'remote.llm']
 export async function apply(ctx) {
-  const { NS, dictionaries, messageKeys } = await require.async(TOKENER_LOCALE_CHUNK)
+  const { NS, dictionaries } = await require.async(TOKENER_LOCALE_CHUNK)
   const api = { credentials: ctx.get('remote.credentials'), settings: ctx.get('remote.settings'), llm: ctx.get('remote.llm') }
   const locale = ctx.get('locale')
   ctx.effect(() => locale.register(NS, dictionaries))
   const t = locale.bind(NS)
   ctx.get('slots').inject('settings.section', () => ctx.get('slots').register({
-    name: 'settings.section', id: 'tokener-provider', order: 20, label: () => t('title'), locale: NS, inject: () => ({ api, messageKeys }),
+    name: 'settings.section', id: 'tokener-provider', order: 20, label: () => t('title'), locale: NS, inject: () => ({ api }),
   }, props => h(TokenerSection, props)))
   ctx.get('slots').inject('settings.section.icon', () => ctx.get('slots').register({
     name: 'settings.section.icon', id: 'tokener-provider',

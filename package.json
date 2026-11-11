@@ -2,15 +2,20 @@
   "name": "@tokener-ai/dsh-tokener-provider",
   "version": "0.1.0-beta.2",
   "description": "Tokener model provider for DeepSeek Harness",
+  "icon": "./icon.svg",
   "type": "module",
   "main": "index.mjs",
   "exports": {
     ".": "./index.mjs",
-    "./client": "./lib/client.js"
+    "./client": "./lib/client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./package.json": "./package.json"
   },
   "files": [
     "index.mjs",
     "lib/client*.js",
+    "locale",
+    "icon.svg",
     "cordis.patch.yml",
     "README.md",
     "LICENSE"

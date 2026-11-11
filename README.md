@@ -1,28 +1,46 @@
 # Tokener provider for DeepSeek Harness
 
-Use models from [Tokener](https://tokener.ai) in [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
+Use [Tokener](https://tokener.ai) models in [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
 
-Tokener gives you access to models through one account. Manage your API keys, prepaid credits, and usage in one place.
-
-## Install and connect
-
-With DeepSeek Harness installed, run:
+## Install
 
 ```sh
 dsh plugin --profile web add @tokener-ai/dsh-tokener-provider
 dsh web
 ```
 
-1. In the browser, open Settings → Tokener.
-2. Paste your [Tokener API key](https://tokener.ai) and select Connect and refresh models.
-3. Select a Tokener model from the conversation model picker.
+1. Open Settings → Tokener.
+2. Paste your [Tokener API key](https://tokener.ai) and select Connect.
+3. Select a Tokener model in the conversation.
 
 ![Tokener settings page in DeepSeek Harness](https://raw.githubusercontent.com/tokener-ai/dsh-tokener-provider/main/assets/settings.png)
 
-If Tokener does not appear in Settings, restart Harness. To refresh models, enter your API key and connect again.
+If Tokener is not in Settings, restart Harness. To refresh the models, enter your API key and connect again.
 
-Your key goes only to Tokener, and Harness saves it. Do not assume that Harness encrypts it.
+## Update
 
-Uninstalling the plugin keeps your saved Tokener models and API key. To remove the models, delete the Tokener entries in Settings → Models. If you no longer need the key, revoke it in your [Tokener account](https://tokener.ai) because Harness can still keep it.
+In Harness, open Plugins → Tokener → Versions and select Update. For a beta version, select Show prereleases first.
 
-This project uses the [MIT license](LICENSE).
+From the command line, name the version, then restart Harness:
+
+```sh
+dsh plugin --profile web add @tokener-ai/dsh-tokener-provider@<version>
+```
+
+Without a version, the command can skip a release that is less than one day old.
+
+## Your API key
+
+Your API key goes only to Tokener. Harness saves it. Do not assume that Harness encrypts it.
+
+## Uninstall
+
+```sh
+dsh plugin --profile web remove @tokener-ai/dsh-tokener-provider
+```
+
+Harness keeps your saved Tokener models and API key. To remove the models, delete the Tokener entries in Settings → Models. To stop the key from working, revoke it in your [Tokener account](https://tokener.ai).
+
+## License
+
+[MIT](LICENSE)
