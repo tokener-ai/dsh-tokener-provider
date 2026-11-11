@@ -2,7 +2,7 @@ import { metadataFor } from './metadata.mjs'
 export const ENDPOINT = 'https://api.tokener.ai/v1'
 export const CREDENTIAL = 'TOKENER_API_KEY'
 export const CATALOG_URL = 'https://console.tokener.ai/api/public/v1/models'
-const catalogError = 'The public Tokener model catalog is unavailable or unsupported. Your saved connection was not changed.'
+const catalogError = 'catalogFailed'
 const positiveInteger = value => Number.isSafeInteger(value) && value > 0
 export function buildRoutes(models, catalog) {
   if (catalog?.schemaVersion !== 1 || !/^sha256:[a-f0-9]{64}$/.test(catalog.catalogRevision) || !Array.isArray(catalog.models)) throw new Error(catalogError)
@@ -17,11 +17,11 @@ export function buildRoutes(models, catalog) {
     if (typeof id !== 'string' || !id) continue
     const model = directory.get(id)
     let reason
-    if (!model) reason = 'No public catalog entry'
-    else if (model.modelType !== 'llm' || model.mode !== 'chat') reason = 'Not a chat model'
-    else if (!positiveInteger(model.contextSize) || !positiveInteger(model.maxOutputTokens)) reason = 'Context or output limit unavailable'
-    else if (!Array.isArray(model.capabilities) || !model.capabilities.includes('streaming') || !model.capabilities.includes('tool_calling')) reason = 'Streaming tool support not declared'
-    else if (typeof model.provider !== 'string' || !model.provider.trim()) reason = 'Model provider unavailable'
+    if (!model) reason = 'noCatalogEntry'
+    else if (model.modelType !== 'llm' || model.mode !== 'chat') reason = 'notChat'
+    else if (!positiveInteger(model.contextSize) || !positiveInteger(model.maxOutputTokens)) reason = 'noLimits'
+    else if (!Array.isArray(model.capabilities) || !model.capabilities.includes('streaming') || !model.capabilities.includes('tool_calling')) reason = 'noTools'
+    else if (typeof model.provider !== 'string' || !model.provider.trim()) reason = 'noProvider'
     if (reason) { skipped.push({ id, reason }); continue }
     const api = model.provider === 'Anthropic' ? 'anthropic-messages' : 'openai-responses'
     const controls = metadataFor(id)
@@ -42,14 +42,14 @@ export function buildRoutes(models, catalog) {
 }
 export async function connect(api, key, fetchCatalog = globalThis.fetch) {
   const apiKey = key.trim()
-  if (!apiKey) throw new Error('Enter a Tokener API key.')
+  if (!apiKey) throw new Error('keyRequired')
   let models
   try {
     const response = await api.llm.discoverModels('llm-pi-ai', { baseURL: ENDPOINT, api: 'openai-responses', apiKey })
     if (!response.ok) throw new Error('Discovery failed')
     models = response.value
   } catch {
-    throw new Error('Tokener did not accept the connection. Make sure that your API key and network connection work.')
+    throw new Error('connectionFailed')
   }
   let result
   try {
@@ -59,7 +59,7 @@ export async function connect(api, key, fetchCatalog = globalThis.fetch) {
   } catch {
     throw new Error(catalogError)
   }
-  if (!result.count) throw new Error('No available models have complete chat metadata and streaming tool support. Your saved connection was not changed.')
+  if (!result.count) throw new Error('noModels')
   try {
     const credential = await api.credentials.set(CREDENTIAL, apiKey)
     if (!credential.ok) throw new Error('Credential storage failed')
@@ -68,7 +68,7 @@ export async function connect(api, key, fetchCatalog = globalThis.fetch) {
       : { op: 'unset', path: ['providers', id] }), undefined)
     if (!saved.ok) throw new Error('Configuration storage failed')
   } catch {
-    throw new Error('The connection worked, but saving failed. Reopen Settings and retry.')
+    throw new Error('saveFailed')
   }
   return result
 }
