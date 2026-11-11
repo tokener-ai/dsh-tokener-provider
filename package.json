@@ -1,6 +1,6 @@
 {
   "name": "@tokener-ai/dsh-tokener-provider",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "description": "Tokener model provider for DeepSeek Harness",
   "icon": "./icon.svg",
   "type": "module",
